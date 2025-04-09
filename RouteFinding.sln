@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteFinding", "RouteFinding\RouteFinding.csproj", "{15179517-9C7F-48E1-B748-917DE3D76AC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OverpassNet", "OverpassNet\OverpassNet.csproj", "{19E9A987-2076-4E90-AD3D-1D76C1C301E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OverpassNet.Tests", "OverpassNet.Tests\OverpassNet.Tests.csproj", "{3F4C7671-00CA-435E-9B10-F604C2F285AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteFinding.WPF", "RouteFinding.WPF\RouteFinding.WPF.csproj", "{A4C95254-837B-4CC6-A1DC-5DCDEF771B90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15179517-9C7F-48E1-B748-917DE3D76AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15179517-9C7F-48E1-B748-917DE3D76AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15179517-9C7F-48E1-B748-917DE3D76AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15179517-9C7F-48E1-B748-917DE3D76AC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E9A987-2076-4E90-AD3D-1D76C1C301E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E9A987-2076-4E90-AD3D-1D76C1C301E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E9A987-2076-4E90-AD3D-1D76C1C301E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E9A987-2076-4E90-AD3D-1D76C1C301E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F4C7671-00CA-435E-9B10-F604C2F285AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F4C7671-00CA-435E-9B10-F604C2F285AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F4C7671-00CA-435E-9B10-F604C2F285AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F4C7671-00CA-435E-9B10-F604C2F285AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4C95254-837B-4CC6-A1DC-5DCDEF771B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4C95254-837B-4CC6-A1DC-5DCDEF771B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4C95254-837B-4CC6-A1DC-5DCDEF771B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4C95254-837B-4CC6-A1DC-5DCDEF771B90}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1AC94ECE-57FC-4966-ABF7-F79FD08058AF}
+	EndGlobalSection
+EndGlobal
