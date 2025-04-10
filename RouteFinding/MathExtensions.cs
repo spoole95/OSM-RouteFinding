@@ -1,10 +1,10 @@
 ﻿namespace RouteFinding;
-internal static class MathExtensions
+public static class MathExtensions
 {
     /// <summary>
     /// Convert degrees to Radians
     /// </summary>
-    /// <param name="x">Degrees</param>
+    /// <param name="degrees">Degrees</param>
     /// <returns>The equivalent in radians</returns>
     public static double Radians(this double degrees)
     {
