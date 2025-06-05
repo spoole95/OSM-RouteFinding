@@ -26,10 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Fixtures\osmSampleData.json">
+    <None Update="TestData\osmSampleData.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Fixtures\overpassMixed.json">
+    <None Update="TestData\overpassMixed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

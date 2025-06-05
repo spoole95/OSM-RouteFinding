@@ -7,4 +7,6 @@ public class Way : Element
     public Way(long id) : base(ElementType.Way, id)
     {
     }
+
+    //TODO - use tags to get way type (path, road, canal, etc)
 }

@@ -36,12 +36,12 @@ public class OsmSerializerTests
     [Fact]
     public void DeserializeOsmJsonTest()
     {
-        Assert.True(ReserializationTest("./Fixtures/osmSampleData.json"));
+        Assert.True(ReserializationTest("./TestData/osmSampleData.json"));
     }
 
     [Fact]
     public void DeserializeOverpassJSONTest()
     {
-        Assert.True(ReserializationTest("./Fixtures/overpassMixed.json"));
+        Assert.True(ReserializationTest("./TestData/overpassMixed.json"));
     }
 }
