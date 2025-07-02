@@ -1,4 +1,5 @@
-﻿using OverpassNet.Entities;
+﻿using Microsoft.Extensions.Logging;
+using OverpassNet.Entities;
 using System.Text;
 using System.Xml.Linq;
 
@@ -78,6 +79,14 @@ public class OverpassQueryBuilder
     {
         QueryBlocks.Add(");");
         return this;
+    }
+
+    public OverpassQueryBuilder Union(Func<OverpassQueryBuilder, OverpassQueryBuilder> innerUnion)
+    {
+        BeginUnion();
+        var qb = innerUnion(this)
+            .EndUnion();
+        return qb; // return the output query builder from function
     }
 
     /// <summary>

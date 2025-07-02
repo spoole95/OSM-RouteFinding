@@ -19,7 +19,7 @@ public class OverpassQueryBuilderTests
             .Output()
             .BuildQuery();
 
-        Assert.Equal("[out:json];way[\"highway\"](52.463465, -0.962827, 52.499166, -0.887756);out body;>;out body", query);
+        Assert.Equal("[out:json];way[\"highway\"](52.463465, -0.962827, 52.499166, -0.887756);out body;>;out body;", query);
     }
 
     [Fact]
@@ -28,11 +28,11 @@ public class OverpassQueryBuilderTests
         var query = new OverpassQueryBuilder()
                 .Relation(8485220)
                 .ToArea(".lei")
-                .BeginUnion()
-                .WayByTag("area.lei")
-                .WithTag("waterway", "canal")
-                .RecurseDown()
-                .EndUnion()
+                .Union((qb) => 
+                    qb.WayByTag("area.lei")
+                    .WithTag("waterway", "canal")
+                    .RecurseDown()
+                    ) 
                 .Output()
                 .BuildQuery();
 

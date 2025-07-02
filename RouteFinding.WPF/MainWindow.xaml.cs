@@ -30,7 +30,10 @@ public partial class MainWindow : Window
         timer.Interval = TimeSpan.FromSeconds(1);
 
         //Run as separate task to UI, deal with it maybe not finishing before timer_Tick
-        Task.Run(async () =>
+        //TODO - will not clearly show error, even in debug, if exceptions here
+        //Task.Run(async () =>
+        //{
+        try
         {
             //elements = await client.GetArea(849358753);
             //elements = await new OverpassQueryBuilder()
@@ -42,29 +45,24 @@ public partial class MainWindow : Window
             //    .GetAsync();
             //elements = await client.GetAllCanalsInRelationArea(8485220);
 
-            //elements = await new OverpassQueryBuilder()
-            //    .Relation(8485220)
-            //    .ToArea(".lei")
-            //    .BeginUnion()
-            //    .WayByTag("area.lei")
-            //    .WithTag("highway")
-            //    .RecurseDown()
-            //    .EndUnion()
-            //    .Output()
-            //    .GetAsync();
-
-            elements = await new OverpassQueryBuilder()
+            elements = new OverpassQueryBuilder()
                 .Relation(8485220)
                 .ToArea(".lei")
                 .BeginUnion()
                 .WayByTag("area.lei")
-                .WithTags(new Dictionary<string, string> { { "highway", "secondary" }, { "highway", "tertiary" }, { "highway", "unclassified" }, { "highway", "residential" } })
+                .WithTag("highway")
                 .RecurseDown()
                 .EndUnion()
                 .Output()
-                .GetAsync();
+                .GetAsync().Result;
 
-        }).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occured: {ex.Message}");
+        }
+        //}).ConfigureAwait(false);
+
 
         timer.Start();
     }
