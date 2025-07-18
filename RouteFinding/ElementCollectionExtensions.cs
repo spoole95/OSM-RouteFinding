@@ -15,6 +15,7 @@ internal static class ElementCollectionExtensions
                 //Node is in this way
                 var index = way.Nodes.ToList().IndexOf(current.UId ?? (ulong)current.Id);
 
+                //TODO - traversing this is slowest of the route generation
                 neighbours.Add((Node)map.Elements.FirstOrDefault(x => (ulong)x.Id == way.Nodes.ElementAtOrDefault(index - 1)));
                 neighbours.Add((Node)map.Elements.FirstOrDefault(x => (ulong)x.Id == way.Nodes.ElementAtOrDefault(index + 1)));
             }

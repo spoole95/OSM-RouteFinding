@@ -137,6 +137,7 @@ public partial class MainWindow : Window
         Parallel.ForEach(ways, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, (way) =>
         //foreach (var way in ways)
         {
+            //TODO - this is highest performance of map generation (contains)
             var wayNodes = elements.Elements.Where(x => way.Nodes.Contains((ulong)x.Id)).DistinctBy(x => x.Id).Select(x => (Node)x).ToHashSet();
 
             var wayNodeIds = way.Nodes.ToList();

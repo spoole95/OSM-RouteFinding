@@ -17,5 +17,6 @@ public class ElementCollection
 
     public string? License { get; set; }
 
+    //TODO - make reading and traversing this much more efficient when > 500k elements
     public IReadOnlyCollection<Element>? Elements { get; set; }
 }
