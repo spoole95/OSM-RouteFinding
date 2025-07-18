@@ -14,7 +14,6 @@ namespace RouteFinding.WPF;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private readonly OverpassClient client;
     private static DispatcherTimer timer = new DispatcherTimer();
     private ElementCollection elements;
     private bool FirstTick = true;
@@ -23,46 +22,30 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+    }
 
-        client = new OverpassClient(new System.Net.Http.HttpClient());
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        elements = await new OverpassQueryBuilder()
+            .Way(52.463465, -0.962827, 52.499166, -0.887756)
+            .WithTag("highway")
+            .Output()
+            .RecurseDown()
+            .Output()
+            .GetAsync();
+        //elements = await new OverpassQueryBuilder()
+        //        .Relation(8485220)
+        //        .ToArea(".lei")
+        //        .BeginUnion()
+        //        .WayByTag("area.lei")
+        //        .WithTag("highway")
+        //        .RecurseDown()
+        //        .EndUnion()
+        //        .Output()
+        //        .GetAsync();
 
         timer.Tick += new EventHandler(timer_Tick);
         timer.Interval = TimeSpan.FromSeconds(1);
-
-        //Run as separate task to UI, deal with it maybe not finishing before timer_Tick
-        //TODO - will not clearly show error, even in debug, if exceptions here
-        //Task.Run(async () =>
-        //{
-        try
-        {
-            //elements = await client.GetArea(849358753);
-            //elements = await new OverpassQueryBuilder()
-            //    .Way(52.463465, -0.962827, 52.499166, -0.887756)
-            //    .WithTag("highway")
-            //    .Output()
-            //    .RecurseDown()
-            //    .Output()
-            //    .GetAsync();
-            //elements = await client.GetAllCanalsInRelationArea(8485220);
-
-            elements = new OverpassQueryBuilder()
-                .Relation(8485220)
-                .ToArea(".lei")
-                .BeginUnion()
-                .WayByTag("area.lei")
-                .WithTag("highway")
-                .RecurseDown()
-                .EndUnion()
-                .Output()
-                .GetAsync().Result;
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occured: {ex.Message}");
-        }
-        //}).ConfigureAwait(false);
-
 
         timer.Start();
     }
@@ -80,6 +63,7 @@ public partial class MainWindow : Window
 
         if (FirstTick)
         {
+            //TODO - slow at huge sizes (query 2)
             DrawMap(minLat, maxLat, minLon, maxLon);
             FirstTick = false;
         }

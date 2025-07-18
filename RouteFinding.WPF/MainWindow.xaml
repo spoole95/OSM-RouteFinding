@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RouteFinding.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1600">
+        Title="MainWindow" Height="800" Width="1600"
+        Loaded="Window_Loaded">
     <Grid>
         <Canvas x:Name="MainCanvas">
             <Canvas x:Name="MapCanvas">
