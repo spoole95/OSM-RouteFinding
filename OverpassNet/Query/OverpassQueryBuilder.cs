@@ -96,7 +96,7 @@ public class OverpassQueryBuilder
     public OverpassQueryBuilder Output()
     {
         //qt output is by geo area and is much faster than by id
-        QueryBlocks.Add("out body;");
+        QueryBlocks.Add("out body qt;");
         return this;
     }
 

@@ -1,4 +1,5 @@
 ﻿using OverpassNet.Entities;
+using OverpassNet.Extensions;
 using OverpassNet.Query;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -25,23 +26,24 @@ public partial class MainWindow : Window
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        elements = await new OverpassQueryBuilder()
-            .Way(52.463465, -0.962827, 52.499166, -0.887756)
-            .WithTag("highway")
-            .Output()
-            .RecurseDown()
-            .Output()
-            .GetAsync();
         //elements = await new OverpassQueryBuilder()
-        //        .Relation(8485220)
-        //        .ToArea(".lei")
-        //        .BeginUnion()
-        //        .WayByTag("area.lei")
-        //        .WithTag("highway")
-        //        .RecurseDown()
-        //        .EndUnion()
-        //        .Output()
-        //        .GetAsync();
+        //    .BeginUnion()
+        //    .Way(52.463465, -0.962827, 52.499166, -0.887756) //Market Harborough area   
+        //    .WithTag("highway")
+        //    .RecurseDown()
+        //    .EndUnion()
+        //    .Output()
+        //    .GetAsync();
+        elements = await new OverpassQueryBuilder()
+                .Relation(8485220)
+                .ToArea(".lei")
+                .BeginUnion()
+                .WayByTag("area.lei")
+                .WithTag("highway")
+                .RecurseDown()
+                .EndUnion()
+                .Output()
+                .GetAsync();
 
         timer.Tick += new EventHandler(timer_Tick);
         timer.Interval = TimeSpan.FromSeconds(1);
@@ -54,63 +56,68 @@ public partial class MainWindow : Window
         if (elements == null) return;
 
         //Query 1 12079 (map ~ 0.5s) - vs Query 2 - 527137 (map ~ haha)
-        var nodes = elements.Elements.Where(x => x.Type == ElementType.Node).Select(x => (Node)x);
+        //var nodes = elements.Elements.Where(x => x.Type == ElementType.Node).Select(x => (Node)x);
+        //var nodes = elements.Nodes;
 
-        //TODO - can do in 2 or fewer loops
-        var minLon = nodes.Min(x => x.Lon);
-        var maxLon = nodes.Max(x => x.Lon);
-        var minLat = nodes.Min(x => x.Lat);
-        var maxLat = nodes.Max(x => x.Lat);
+
+        var minLon = elements.MinLon;
+        var maxLon = elements.MaxLon;
+        var maxLat = elements.MaxLat;
+        var minLat = elements.MinLat;
 
         if (FirstTick)
         {
-            //TODO - slow at huge sizes (query 2)
             DrawMap(minLat, maxLat, minLon, maxLon);
             FirstTick = false;
         }
-
-        //var start = (Node)elements.Elements.First(x => x.Id == 7414203190); //Havest Road
-        var start = (Node)elements.Elements.Where(x => x.Type == ElementType.Node).PickRandom();
-        var end = (Node)elements.Elements.Where(x => x.Type == ElementType.Node).PickRandom();
-
-        var route = RouteFinder.AStar(start, end, elements);
-
-        if (route != null)
+        else
         {
-            var routeElements = new List<RouteFinding.WPF.UiElements.Line>();
-            for (var i = 0; i < route.Count - 1; i++)
+
+            elements.Nodes.TryGetValue(7414203190, out var start); //Havest Road
+                                                                   //var start = elements.Nodes.PickRandom().Value;
+            var end = elements.Nodes.PickRandom().Value;
+
+            //if (true) return; //TODO - remove this to run route finding
+            var route = RouteFinder.AStar(start, end, elements);
+
+            if (route != null)
             {
-                var n1 = route.Single(x => x.Id == route[i].Id);
-                var n2 = route.Single(x => x.Id == route[i + 1].Id);
-
-                (double x1, double y1) = ConvertLatLonToXY(n1.Lat, n1.Lon, minLat, maxLat, minLon, maxLon, Width, Height);
-                (double x2, double y2) = ConvertLatLonToXY(n2.Lat, n2.Lon, minLat, maxLat, minLon, maxLon, Width, Height);
-
-                UiElements.Line line = new UiElements.Line
+                var routeElements = new List<RouteFinding.WPF.UiElements.Line>();
+                for (var i = 0; i < route.Count - 1; i++)
                 {
-                    X1 = x1,
-                    Y1 = y1,
-                    X2 = x2,
-                    Y2 = y2,
-                    Stroke = Brushes.Red,
-                    StrokeThickness = 2
-                };
-                routeElements.Add(line);
-            }
+                    var n1 = route.Single(x => x.Id == route[i].Id);
+                    var n2 = route.Single(x => x.Id == route[i + 1].Id);
 
-            var visual = new DrawingVisual();
-            using (var dc = visual.RenderOpen())
-            {
-                foreach (var line in routeElements)
-                {
-                    var pen = new Pen(line.Stroke, line.StrokeThickness);
-                    dc.DrawLine(pen, new Point(line.X1, line.Y1), new Point(line.X2, line.Y2));
+                    (double x1, double y1) = ConvertLatLonToXY(n1.Lat, n1.Lon, minLat, maxLat, minLon, maxLon, Width, Height);
+                    (double x2, double y2) = ConvertLatLonToXY(n2.Lat, n2.Lon, minLat, maxLat, minLon, maxLon, Width, Height);
+
+                    UiElements.Line line = new UiElements.Line
+                    {
+                        X1 = x1,
+                        Y1 = y1,
+                        X2 = x2,
+                        Y2 = y2,
+                        Stroke = Brushes.Red,
+                        StrokeThickness = 2
+                    };
+                    routeElements.Add(line);
                 }
+
+                var visual = new DrawingVisual();
+                using (var dc = visual.RenderOpen())
+                {
+                    foreach (var line in routeElements)
+                    {
+                        var pen = new Pen(line.Stroke, line.StrokeThickness);
+                        dc.DrawLine(pen, new Point(line.X1, line.Y1), new Point(line.X2, line.Y2));
+                    }
+                }
+                RouteCanvas.RedrawVisual(visual);
             }
-            RouteCanvas.RedrawVisual(visual);
+            timer.Stop();
         }
     }
-    
+
 
     private void DrawMap(double minLat,
         double maxLat,
@@ -126,26 +133,24 @@ public partial class MainWindow : Window
         var sw = new Stopwatch();
         sw.Start();
 
-        var ways = elements.Elements.Where(x => x.Type == ElementType.Way
-             && (x.Tags == null ||
-                !x.Tags.ContainsKey("landuse"))).Cast<Way>().ToList();
+        //var ways = elements.Elements.Where(x => x.Type == ElementType.Way
+        //     && (x.Tags == null ||
+        //        !x.Tags.ContainsKey("landuse"))).Cast<Way>().ToList();
+        var ways = elements.Ways.Values;
 
-        var mapElements = new ConcurrentBag<UiElements.Line>();
+        var lineElements = new ConcurrentBag<UiElements.Line>();
 
-        //TODO - chunk though on many passes so UI shows something instantly and slowly loads in?
-        // - Loop a lot less (pre-calculation on Elements collection to put real nodes in the ways? - difficulty where node belongs to > 1 way)
-        Parallel.ForEach(ways, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, (way) =>
+        Parallel.ForEach(ways, new ParallelOptions { MaxDegreeOfParallelism = 5 }, (way) =>
         //foreach (var way in ways)
         {
-            //TODO - this is highest performance of map generation (contains)
-            var wayNodes = elements.Elements.Where(x => way.Nodes.Contains((ulong)x.Id)).DistinctBy(x => x.Id).Select(x => (Node)x).ToHashSet();
+            elements.Nodes.TryGetValues(way.Nodes, out var wayNodes);
 
-            var wayNodeIds = way.Nodes.ToList();
+            var wayNodeIds = way.Nodes.Distinct().ToList();
 
             for (var i = 0; i < wayNodeIds.Count - 1; i++)
             {
-                var n1 = wayNodes.Single(x => (ulong)x.Id == wayNodeIds[i]);
-                var n2 = wayNodes.Single(x => (ulong)x.Id == wayNodeIds[i + 1]);
+                var n1 = wayNodes.First(x => (ulong)x.Id == wayNodeIds[i]);
+                var n2 = wayNodes.First(x => (ulong)x.Id == wayNodeIds[i + 1]);
 
                 (double x1, double y1) = ConvertLatLonToXY(n1.Lat, n1.Lon, minLat, maxLat, minLon, maxLon, width, height);
                 (double x2, double y2) = ConvertLatLonToXY(n2.Lat, n2.Lon, minLat, maxLat, minLon, maxLon, width, height);
@@ -159,14 +164,14 @@ public partial class MainWindow : Window
                     Stroke = GetWayColor(way),
                     StrokeThickness = 2
                 };
-                mapElements.Add(line);
+                lineElements.Add(line);
             }
         });
 
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
         {
-            foreach (var line in mapElements)
+            foreach (var line in lineElements)
             {
                 var pen = new Pen(line.Stroke, line.StrokeThickness);
                 dc.DrawLine(pen, new Point(line.X1, line.Y1), new Point(line.X2, line.Y2));
@@ -175,7 +180,7 @@ public partial class MainWindow : Window
         MapCanvas.AddVisual(visual);
 
         sw.Stop();
-        Console.WriteLine(sw.Elapsed.TotalSeconds);
+        Console.WriteLine(sw.Elapsed.TotalSeconds); // ~1.3s 500k nodes, max degree 5
     }
 
 
@@ -226,6 +231,11 @@ public partial class MainWindow : Window
 
         // Flip y-axis since screen coordinates start from the top-left
         double y = height * (1 - normalizedY);
+
+        if (double.IsNaN(x) || double.IsNaN(y))
+        {
+            //throw new ArgumentException("Invalid latitude or longitude values.");
+        }
 
         return (x, y);
     }

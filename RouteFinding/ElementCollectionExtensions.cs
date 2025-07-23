@@ -8,16 +8,21 @@ internal static class ElementCollectionExtensions
     {
         var neighbours = new List<Node>();
 
-        foreach (var way in map.Elements.Where(x => x.Type == ElementType.Way).Cast<Way>())
+        foreach (var way in map.Ways.Values)
         {
             if (way.Nodes.Contains(current.UId ?? (ulong)current.Id))
             {
                 //Node is in this way
                 var index = way.Nodes.ToList().IndexOf(current.UId ?? (ulong)current.Id);
 
-                //TODO - traversing this is slowest of the route generation
-                neighbours.Add((Node)map.Elements.FirstOrDefault(x => (ulong)x.Id == way.Nodes.ElementAtOrDefault(index - 1)));
-                neighbours.Add((Node)map.Elements.FirstOrDefault(x => (ulong)x.Id == way.Nodes.ElementAtOrDefault(index + 1)));
+                if( map.Nodes.TryGetValue(way.Nodes.ElementAtOrDefault(index - 1), out var n1))
+                {
+                    neighbours.Add(n1);
+                }
+                if( map.Nodes.TryGetValue(way.Nodes.ElementAtOrDefault(index + 1), out var n2))
+                {
+                    neighbours.Add(n2);
+                }
             }
         }
         return neighbours.Where(x => x != null).ToHashSet();
